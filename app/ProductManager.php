@@ -47,4 +47,49 @@ Class ProductManager
 
         return $products;
     }
+
+    public static function getProduct($id)
+    {
+
+        $_pf = new WC_Product_Factory();
+        $product = $_pf->get_product($id);
+        $response = $product->get_data();
+
+        $categories_id = $product->get_category_ids();
+        $tags_id = $product->get_tag_ids();
+
+        $categories_name = $categories_tags = $attributes = [];
+        foreach ($categories_id as $cat_id) {
+            $categories_name[] = get_cat_name($cat_id);
+        }
+        foreach ($tags_id as $tag_id) {
+            $categories_tags[] = get_tag($tag_id)->name;
+        }
+        foreach ($product->get_attributes() as $attr){
+            $attributes[] = [
+                'name' => $attr->get_name(),
+                'options' => $attr->get_options()
+            ];
+        }
+
+        $response['image'] = $product->get_image();
+        $response['categories'] = $categories_name;
+        $response['tags'] = $categories_tags;
+        $response['attributes'] = $attributes;
+
+        return $response;
+    }
+
+    public static function updateProduct($id, $data){
+
+        $_pf = new WC_Product_Factory();
+        $product = $_pf->get_product($id);
+        $helper = $product->get_data();
+        foreach ($helper as $prop => $val){
+            $setter = "set_$prop";
+            $product->{$setter}($data[$prop]);
+        }
+        return $product->save();
+
+    }
 }

@@ -34,11 +34,27 @@ function urlHandler()
 function getResponseForHub($request)
 {
     switch ($request['uri']) {
+
+        // Done.
         case BASE_HUB_API_URI . 'products/index':
             $response = ProductManager::getProducts();
             break;
 
+        case (preg_match(',' . BASE_HUB_API_URI . 'products/view/([0-9]+$),', $request['uri'], $m) ? true : false) :
+            $response = ProductManager::getProduct($m[1]);
+            break;
+
+        case (preg_match(',' . BASE_HUB_API_URI . 'products/edit/([0-9]+$),', $request['uri'], $m) ? true : false) :
+            if($request['method'] == 'POST'){
+                $response = ProductManager::updateProduct($m[1], $request['data']);
+            }
+            else{
+                $response = ProductManager::getProduct($m[1]);
+            }
+            break;
+
         default:
+            die('default');
             $response = false;
             break;
     }
