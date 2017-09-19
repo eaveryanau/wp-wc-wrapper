@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Uha
+Plugin Name: WP WC wrapper
 Description: Universal hub data aggregator
 Version: 1.0
 Author: Averyanau Yauheni

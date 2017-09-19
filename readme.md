@@ -1,3 +1,6 @@
 **How to install**:
-1) create folder '_universal-hub-aggregator_' into _wp-content/plugins_
-2) insert all files inside.
+1) clone into _wp-content/plugins_
+
+_{root_project}/wp-content/plugins/wp-wc-wrapper/*_
+
+2) activate plugin in dashboard
