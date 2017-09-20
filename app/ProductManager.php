@@ -29,7 +29,7 @@ Class ProductManager {
 			foreach ( $tags_id as $tag_id ) {
 				$categories_tags[] = get_tag( $tag_id )->name;
 			}
-			$date       = $product->get_date_created()->date( 'Y-m-d' );
+			$date       = $product->get_date_created()->date('Y-m-d');
 			$products[] = [
 				'id'           => $data['id'],
 				'image'        => $product->get_image(),

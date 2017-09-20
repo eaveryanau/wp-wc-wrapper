@@ -66,9 +66,26 @@ function getResponseForHub( $request ) {
 			}
 			break;
 
+		//customer
+
+		case BASE_HUB_API_URI . 'customers/index':
+			$response = CustomerManager::getCustomers();
+			break;
+
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'customers/view/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+			$response = CustomerManager::getCustomer( $m[1] );
+			break;
+
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'customers/edit/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+			if ( $request['method'] == 'POST' ) {
+				$response = CustomerManager::updateCustomer( $m[1], $request['data'] );
+			} else {
+				$response = CustomerManager::getCustomer( $m[1] );
+			}
+			break;
+
 		default:
-			die( 'default' );
-			$response = false;
+			$response = [ 'error' => 'wrong route' ];
 			break;
 	}
 
