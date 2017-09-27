@@ -3,4 +3,6 @@
 
 _{root_project}/wp-content/plugins/wp-wc-wrapper/*_
 
-2) activate plugin in dashboard
+2) activate plugin in dashboard.
+
+3) Add _secure key_ in settings page.
