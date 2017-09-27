@@ -23,7 +23,7 @@ function urlHandler() {
 		'uri'          => ( $uri_help ) ? $uri_help : $_SERVER['REQUEST_URI'],
 		'method'       => $_SERVER['REQUEST_METHOD'],
 		'data'         => $_REQUEST,
-		'access-token' => ( $_SERVER['HTTP_ACCESS_TOKEN'] ) ? $_SERVER['HTTP_ACCESS_TOKEN'] : null
+		'access-token' => ( isset($_SERVER['HTTP_ACCESS_TOKEN']) ) ? $_SERVER['HTTP_ACCESS_TOKEN'] : null
 	];
 	if ( strstr( $request['uri'], BASE_HUB_API_URI ) ) {
 		if ( checkSecureKey( $request['access-token'] ) ) {
