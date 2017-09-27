@@ -18,14 +18,20 @@ require_once( 'app/bootstrap.php' );
 // Check any requests.
 add_action( 'parse_request', 'urlHandler' );
 function urlHandler() {
-	$request = [
-		'uri'    => $_SERVER['REQUEST_URI'],
-		'method' => $_SERVER['REQUEST_METHOD'],
-		'data'   => $_REQUEST
+	$uri_help = strstr( $_SERVER['REQUEST_URI'], '?', true );
+	$request  = [
+		'uri'          => ( $uri_help ) ? $uri_help : $_SERVER['REQUEST_URI'],
+		'method'       => $_SERVER['REQUEST_METHOD'],
+		'data'         => $_REQUEST,
+		'access-token' => ( $_SERVER['HTTP_ACCESS_TOKEN'] ) ? $_SERVER['HTTP_ACCESS_TOKEN'] : null
 	];
 	if ( strstr( $request['uri'], BASE_HUB_API_URI ) ) {
-		$response = getResponseForHub( $request );
-		wp_send_json( $response );
+		if ( checkSecureKey( $request['access-token'] ) ) {
+			$response = getResponseForHub( $request );
+			wp_send_json( $response );
+		} else {
+			wp_send_json( [ 'data' => null, 'error' => 'Request not authenticated.' ] );
+		}
 	}
 }
 
@@ -50,15 +56,15 @@ function getResponseForHub( $request ) {
 			}
 			break;
 
-		case BASE_HUB_API_URI . 'orders/index':
+		case BASE_HUB_API_URI . 'order/index':
 			$response = OrderManager::getOrders();
 			break;
 
-		case ( preg_match( ',' . BASE_HUB_API_URI . 'orders/view/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'order/view/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
 			$response = OrderManager::getOrder( $m[1] );
 			break;
 
-		case ( preg_match( ',' . BASE_HUB_API_URI . 'orders/edit/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'order/edit/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
 			if ( $request['method'] == 'POST' ) {
 				$response = OrderManager::updateOrder( $m[1], $request['data'] );
 			} else {
@@ -90,4 +96,21 @@ function getResponseForHub( $request ) {
 	}
 
 	return $response;
+}
+
+function checkSecureKey( $token ) {
+
+	if ( ! $token ) {
+		return false;
+	}
+
+	$secure_key = get_option( 'hub_options' )['hub_secret_key'];
+
+	$valid_token = md5( gmdate( 'Y' ) . $secure_key . gmdate( 'm' ) . gmdate( 'd' ) );
+
+	if ( $token === $valid_token ) {
+		return true;
+	} else {
+		return false;
+	}
 }

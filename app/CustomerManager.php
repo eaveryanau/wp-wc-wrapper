@@ -10,38 +10,52 @@ Class CustomerManager {
 
 	public static function getCustomers() {
 
-		$response = array();
-		$args     = array(
-			'role' => 'customer'
-		);
-
-		$my_user_query = new WP_User_Query( $args );
-		$customers     = $my_user_query->get_results();
-
-		foreach ( $customers as $customer ) {
-			$cc          = new WC_Customer( $customer->ID );
-			$response [] = [
-				'id'           => $cc->get_id(),
-				'username'     => $cc->get_username(),
-				'firstname'    => $cc->get_first_name(),
-				'lastname'     => $cc->get_last_name(),
-				'email'        => $cc->get_email(),
-				'date_created' => $cc->get_date_created()->date( 'Y-m-d' ),
-				'display_name' => $cc->get_display_name()
+		try {
+			$data = [];
+			$args = [
+				'role' => 'customer'
 			];
+
+			$my_user_query = new WP_User_Query( $args );
+			$customers     = $my_user_query->get_results();
+
+			foreach ( $customers as $customer ) {
+				$cc      = new WC_Customer( $customer->ID );
+				$data [] = [
+					'id'           => $cc->get_id(),
+					'username'     => $cc->get_username(),
+					'firstname'    => $cc->get_first_name(),
+					'lastname'     => $cc->get_last_name(),
+					'email'        => $cc->get_email(),
+					'date_created' => $cc->get_date_created()->date( 'Y-m-d' ),
+					'display_name' => $cc->get_display_name()
+				];
+			}
+			$response = [ 'data' => $data, 'error' => '' ];
+		} catch ( \Exception $ex ) {
+			$response = [ 'data' => '', 'error' => 'Internal error into CustomerManager::getCustomers()' ];
 		}
 
 		return $response;
 	}
 
 	public static function getCustomer( $id ) {
-		$customer = new WC_Customer( $id );
-		if ( $customer->get_role() != 'customer' ) {
-			return [ 'error' => 'customer not found' ];
+		try {
+			$customer = new WC_Customer( $id );
+			if ( $customer->get_role() != 'customer' ) {
+				return [ 'error' => 'customer not found' ];
+			}
+			$data                  = $customer->get_data();
+			$data['date_created']  = $customer->get_date_created()->date( 'Y-m-d' );
+			$data['date_modified'] = ( $customer->get_date_modified() ) ? $customer->get_date_modified()->date( 'Y-m-d' ) : null;
+
+			$response = [ 'data' => $data, 'error' => '' ];
+		} catch ( \Exception $ex ) {
+			$response = [
+				'data'  => '',
+				'error' => 'Internal error into CustomerManager::getCustomer()(id=' . $id . ')'
+			];
 		}
-		$response                  = $customer->get_data();
-		$response['date_created']  = $customer->get_date_created()->date( 'Y-m-d' );
-		$response['date_modified'] = ( $customer->get_date_modified() ) ? $customer->get_date_modified()->date( 'Y-m-d' ) : null;
 
 		return $response;
 	}
