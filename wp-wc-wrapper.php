@@ -18,6 +18,7 @@ require_once( 'app/bootstrap.php' );
 // Check any requests.
 add_action( 'parse_request', 'urlHandler' );
 function urlHandler() {
+
 	$uri_help = strstr( $_SERVER['REQUEST_URI'], '?', true );
 	$request  = [
 		'uri'          => ( $uri_help ) ? $uri_help : $_SERVER['REQUEST_URI'],
