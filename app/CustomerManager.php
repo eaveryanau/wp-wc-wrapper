@@ -28,7 +28,10 @@ Class CustomerManager {
 					'lastname'     => $cc->get_last_name(),
 					'email'        => $cc->get_email(),
 					'date_created' => $cc->get_date_created()->date( 'Y-m-d' ),
-					'display_name' => $cc->get_display_name()
+					'display_name' => $cc->get_display_name(),
+					'phone'        => $cc->get_billing_phone(),
+					'address'      => $cc->get_billing_address(),
+					'order_count'  => $cc->get_order_count()
 				];
 			}
 			$response = [ 'data' => $data, 'error' => '' ];
@@ -62,13 +65,53 @@ Class CustomerManager {
 
 	public static function updateCustomer( $id, $data ) {
 
-		$helper   = self::getCustomer( $id );
-		$customer = new WC_Customer( $id );
-		foreach ( $helper as $prop => $val ) {
-			$setter = "set_$prop";
-			$customer->{$setter}( $data[ $prop ] );
-		}
 
-		return $customer->save();
+		$customer = new WC_Customer( $id );
+
+		$customer->set_email($data['email']);
+		$customer->set_first_name($data['first_name']);
+		$customer->set_last_name($data['last_name']);
+		$customer->set_role($data['role']);
+		$customer->set_username($data['username']);
+
+		// billing
+		$customer->set_billing_first_name($data['billing']['first_name']);
+		$customer->set_billing_last_name($data['billing']['last_name']);
+		$customer->set_billing_company($data['billing']['company']);
+		$customer->set_billing_address_1($data['billing']['address_1']);
+		$customer->set_billing_address_2($data['billing']['address_2']);
+		$customer->set_billing_city($data['billing']['city']);
+		$customer->set_billing_state($data['billing']['state']);
+		$customer->set_billing_postcode($data['billing']['postcode']);
+		$customer->set_billing_country($data['billing']['country']);
+		$customer->set_billing_email($data['billing']['email']);
+		$customer->set_billing_phone($data['billing']['phone']);
+
+		//shipping
+		$customer->set_shipping_first_name($data['shipping']['first_name']);
+		$customer->set_shipping_last_name($data['shipping']['last_name']);
+		$customer->set_shipping_company($data['shipping']['company']);
+		$customer->set_shipping_address_1($data['shipping']['address_1']);
+		$customer->set_shipping_address_2($data['shipping']['address_2']);
+		$customer->set_shipping_city($data['shipping']['city']);
+		$customer->set_shipping_state($data['shipping']['state']);
+		$customer->set_shipping_postcode($data['shipping']['postcode']);
+		$customer->set_shipping_country($data['shipping']['country']);
+		$customer->set_is_paying_customer($data['is_paying_customer']);
+		$customer->save();
+
+		return true;
+
+	}
+
+	public static function deleteCustomer($id){
+
+		require_once(ABSPATH.'wp-admin/includes/user.php');
+
+		$is_customer_delete  = wp_delete_user( $id );
+
+		$response = ($is_customer_delete) ? ['data' => ['customer deleted'], 'error' => ''] : ['data' => [], 'error' => 'not delete'];
+
+		return $response;
 	}
 }

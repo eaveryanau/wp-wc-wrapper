@@ -30,17 +30,24 @@ Class ProductManager {
 				foreach ( $tags_id as $tag_id ) {
 					$categories_tags[] = get_tag( $tag_id )->name;
 				}
-				$date       = $product->get_date_created()->date('Y-m-d');
+
 				$products[] = [
 					'id'           => $data['id'],
 					'image'        => $product->get_image(),
 					'name'         => $data['name'],
 					'sku'          => $data['sku'],
 					'stock_status' => $data['stock_status'],
+					'stock_quantity' => $data['stock_quantity'],
 					'price'        => $data['price'],
 					'categories'   => $categories_name,
+					'description'   => $product->get_description(),
 					'tags'         => $categories_tags,
-					'date'         => $date
+                    /*'date_product' => [
+                        'created'           => ($time = $product->get_date_created()) ? $time->getTimestamp() : null,
+                        'last_modified'     => ($time = $product->get_date_modified()) ? $time->getTimestamp() : null,
+                        'date_on_sale_from' => ($time = $product->get_date_on_sale_from()) ? $time->getTimestamp() : null,
+                        'date_on_sale_to'   => ($time = $product->get_date_on_sale_to()) ? $time->getTimestamp() : null,
+                    ]*/
 				];
 			}
 			$response = [ 'data' => $products, 'error' => '' ];
@@ -76,10 +83,24 @@ Class ProductManager {
 				];
 			}
 
+            $categories_temp = get_terms('product_cat');
+			$categories = [];
+			foreach ($categories_temp as $ct){
+                $categories [$ct->slug ] = $ct->name;
+            }
+
+            $data['all_categories'] = $categories;
 			$data['image']      = $product->get_image();
 			$data['categories'] = $categories_name;
 			$data['tags']       = $categories_tags;
 			$data['attributes'] = $attributes;
+
+			$data['date_product'] = [
+                'created'           => ($time = $product->get_date_created()) ? $time->getTimestamp() : null,
+                'last_modified'     => ($time = $product->get_date_modified()) ? $time->getTimestamp() : null,
+                'date_on_sale_from' => ($time = $product->get_date_on_sale_from()) ? $time->getTimestamp() : null,
+                'date_on_sale_to'   => ($time = $product->get_date_on_sale_to()) ? $time->getTimestamp() : null,
+            ];
 
 			$response = [ 'data' => $data, 'error' => '' ];
 		}
@@ -90,17 +111,46 @@ Class ProductManager {
 		return $response;
 	}
 
-	public static function updateProduct( $id, $data ) {
+    public static function updateProduct( $id, $data ) {
 
-		$_pf     = new WC_Product_Factory();
-		$product = $_pf->get_product( $id );
-		$helper  = $product->get_data();
-		foreach ( $helper as $prop => $val ) {
-			$setter = "set_$prop";
-			$product->{$setter}( $data[ $prop ] );
+        $_pf     = new WC_Product_Factory();
+        $product = $_pf->get_product( $id );
+        $ct = [];
+        foreach($data['categories'] as $cat){
+            $cc = get_term_by( 'slug', $cat, 'product_cat' );
+            $ct []  = $cc->term_id;
+        }
+
+        $helper  = $product->get_data();
+        foreach ( $helper as $prop => $val ) {
+            if($prop == 'category_ids'){
+                $product->set_category_ids($ct);
+            }
+            else {
+                $setter = "set_$prop";
+                $product->{$setter}($data[$prop]);
+            }
+        }
+
+        return $product->save();
+
+    }
+
+	public static function deleteProduct( $id ) {
+
+		$_pf      = new WC_Product_Factory();
+		$product  = $_pf->get_product( $id );
+
+
+		if ( $product ) {
+			$response = ( $product->delete() ) ? [ 'data' => [ 'product deleted' ], 'error' => '' ] : [
+				'data'  => [],
+				'error' => 'not delete'
+			];
+		} else {
+			$response = [ 'data' => [], 'error' => 'not delete' ];
 		}
 
-		return $product->save();
-
+		return $response;
 	}
 }

@@ -57,21 +57,50 @@ function getResponseForHub( $request ) {
 			}
 			break;
 
-		case BASE_HUB_API_URI . 'order/index':
-			$response = OrderManager::getOrders();
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'products/delete/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+			if ( $request['method'] == 'POST' ) {
+				$response = ProductManager::deleteProduct( $m[1] );
+			} else {
+				$response = [ 'error' => 'wrong route' ];
+			}
 			break;
 
-		case ( preg_match( ',' . BASE_HUB_API_URI . 'order/view/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+		case BASE_HUB_API_URI . 'orders/index':
+			$response = OrderManager::getOrders();
+			break;
+		case BASE_HUB_API_URI . 'orders/archive':
+			$response = OrderManager::getOrders(true);
+			break;
+
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'orders/view/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
 			$response = OrderManager::getOrder( $m[1] );
 			break;
 
-		case ( preg_match( ',' . BASE_HUB_API_URI . 'order/edit/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'orders/edit/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
 			if ( $request['method'] == 'POST' ) {
 				$response = OrderManager::updateOrder( $m[1], $request['data'] );
 			} else {
 				$response = OrderManager::getOrder( $m[1] );
 			}
 			break;
+
+        case BASE_HUB_API_URI . 'orders/bulk-update' :
+            if ( $request['method'] == 'POST' ) {
+                $response = OrderManager::bulkUpdateOrder( $request['data'] );
+            } else {
+                $response = [ 'error' => 'wrong route' ];
+            }
+            break;
+
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'orders/delete/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+			if ( $request['method'] == 'POST' ) {
+				$response = OrderManager::deleteOrder( $m[1] );
+			} else {
+				$response = [ 'error' => 'wrong route' ];
+			}
+			break;
+
+
 
 		//customer
 
@@ -90,7 +119,24 @@ function getResponseForHub( $request ) {
 				$response = CustomerManager::getCustomer( $m[1] );
 			}
 			break;
+		case ( preg_match( ',' . BASE_HUB_API_URI . 'customers/delete/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+			if ( $request['method'] == 'POST' ) {
+				$response = CustomerManager::deleteCustomer( $m[1] );
+			} else {
+				$response = [ 'error' => 'wrong route' ];
+			}
+			break;
 
+
+		//save settings
+
+		case BASE_HUB_API_URI . 'settings/notification':
+			if ( $request['method'] == 'POST' ) {
+				$response = SettingsManager::saveSettings( $request['data'] );
+			}else{
+				$response = [ 'error' => 'wrong route' ];
+			}
+			break;
 		default:
 			$response = [ 'error' => 'wrong route' ];
 			break;

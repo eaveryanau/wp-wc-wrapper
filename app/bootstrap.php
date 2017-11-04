@@ -11,3 +11,5 @@ require_once 'OrderManager.php';
 require_once 'CustomerManager.php';
 
 require_once 'BackEndPreprocess.php';
+
+require_once 'MailService.php';

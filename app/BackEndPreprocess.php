@@ -25,18 +25,18 @@ add_action( 'admin_menu', 'hub_options' );
 function hub_option_page() {
 	global $hub_page;
 	?>
-	<div class="wrap">
-	<h2>Hub settings</h2>
-	<form method="post" enctype="multipart/form-data" action="options.php">
+    <div class="wrap">
+    <h2>Hub settings</h2>
+    <form method="post" enctype="multipart/form-data" action="options.php">
 		<?php
 		settings_fields( 'hub_options' );
 		do_settings_sections( $hub_page );
 		?>
-		<p class="submit">
-			<input type="submit" class="button-primary" value="<?php _e( 'Save Changes' ) ?>"/>
-		</p>
-	</form>
-	</div><?php
+        <p class="submit">
+            <input type="submit" class="button-primary" value="<?php _e( 'Save Changes' ) ?>"/>
+        </p>
+    </form>
+    </div><?php
 }
 
 /*
@@ -160,7 +160,7 @@ function register_my_new_order_statuses() {
 		'show_in_admin_status_list' => true,
 		'label_count'               => _n_noop( 'Pending Dispatch <span class="count">(%s)</span>', 'Pending Dispatch<span class="count">(%s)</span>', 'woocommerce' )
 	) );
-	register_post_status( 'wc-courier-collection-requested', array(
+	register_post_status( 'wc-cc-requested', array(
 		'label'                     => _x( 'Courier Collection Requested', 'Order status', 'woocommerce' ),
 		'public'                    => true,
 		'exclude_from_search'       => false,
@@ -168,7 +168,7 @@ function register_my_new_order_statuses() {
 		'show_in_admin_status_list' => true,
 		'label_count'               => _n_noop( 'Courier Collection Requested <span class="count">(%s)</span>', 'Courier Collection Requested<span class="count">(%s)</span>', 'woocommerce' )
 	) );
-	register_post_status( 'wc-courier-collection-request-received', array(
+	register_post_status( 'wc-cc-req-received', array(
 		'label'                     => _x( 'Courier Collection Request Received', 'Order status', 'woocommerce' ),
 		'public'                    => true,
 		'exclude_from_search'       => false,
@@ -206,13 +206,13 @@ add_filter( 'wc_order_statuses', 'my_new_wc_order_statuses' );
 
 // Register in wc_order_statuses.
 function my_new_wc_order_statuses( $order_statuses ) {
-	$order_statuses['wc-invoiced']                            = _x( 'Invoiced', 'Order status', 'woocommerce' );
-	$order_statuses['wc-pending-dispatch']                    = _x( 'Pending Dispatch', 'Order status', 'woocommerce' );
-	$order_statuses['wc-courier-collection-requested']        = _x( 'Courier Collection Requested', 'Order status', 'woocommerce' );
-	$order_statuses['wc-courier-collection-request-received'] = _x( 'Courier Collection Request Received', 'Order status', 'woocommerce' );
-	$order_statuses['wc-collected']                           = _x( 'Collected', 'Order status', 'woocommerce' );
-	$order_statuses['wc-delivered']                           = _x( 'Delivered', 'Order status', 'woocommerce' );
-	$order_statuses['wc-returned']                            = _x( 'Returned', 'Order status', 'woocommerce' );
+	$order_statuses['wc-invoiced']         = _x( 'Invoiced', 'Order status', 'woocommerce' );
+	$order_statuses['wc-pending-dispatch'] = _x( 'Pending Dispatch', 'Order status', 'woocommerce' );
+	$order_statuses['wc-cc-requested']     = _x( 'Courier Collection Requested', 'Order status', 'woocommerce' );
+	$order_statuses['wc-cc-req-received']  = _x( 'Courier Collection Request Received', 'Order status', 'woocommerce' );
+	$order_statuses['wc-collected']        = _x( 'Collected', 'Order status', 'woocommerce' );
+	$order_statuses['wc-delivered']        = _x( 'Delivered', 'Order status', 'woocommerce' );
+	$order_statuses['wc-returned']         = _x( 'Returned', 'Order status', 'woocommerce' );
 
 	return $order_statuses;
 }
