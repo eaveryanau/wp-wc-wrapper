@@ -128,8 +128,16 @@ Class ProductManager {
                 $product->set_category_ids($ct);
             }
             else {
-                $setter = "set_$prop";
-                $product->{$setter}($val);
+                if($prop == 'stock_quantity'){
+                    if(!empty($val) || $val > 0){
+                        $product->set_manage_stock(true);
+                        $product->set_stock_quantity($val);
+                    }
+                }
+                else{
+                    $setter = "set_$prop";
+                    $product->{$setter}($val);
+                }
             }
         }
 
