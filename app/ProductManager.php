@@ -13,7 +13,8 @@ Class ProductManager {
 		try{
 			$products = array();
 			$loop     = new WP_Query( [
-				'post_type'      => [ 'product', 'product_variation' ],
+//				'post_type'      => [ 'product', 'product_variation' ],
+				'post_type'      => [ 'product' ],
 				'posts_per_page' => - 1
 			] );
 			while ( $loop->have_posts() ) {
@@ -121,14 +122,14 @@ Class ProductManager {
             $ct []  = $cc->term_id;
         }
 
-        $helper  = $product->get_data();
-        foreach ( $helper as $prop => $val ) {
-            if($prop == 'category_ids'){
+//        $helper  = $product->get_data();
+        foreach ( $data as $prop => $val ) {
+            if($prop == 'categories'){
                 $product->set_category_ids($ct);
             }
             else {
                 $setter = "set_$prop";
-                $product->{$setter}($data[$prop]);
+                $product->{$setter}($val);
             }
         }
 
