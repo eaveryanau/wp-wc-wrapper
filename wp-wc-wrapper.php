@@ -157,7 +157,7 @@ function getResponseForHub( $request ) {
 
 function checkSecureKey( $token ) {
 
-    return true;
+
 	if ( ! $token ) {
 		return false;
 	}
