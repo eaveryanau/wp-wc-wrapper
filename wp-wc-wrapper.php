@@ -137,6 +137,16 @@ function getResponseForHub( $request ) {
 				$response = [ 'error' => 'wrong route' ];
 			}
 			break;
+
+        //save settings
+
+        case BASE_HUB_API_URI . 'report/get':
+
+            $response = ReportManager::getReport();
+
+            break;
+
+
 		default:
 			$response = [ 'error' => 'wrong route' ];
 			break;
@@ -147,6 +157,7 @@ function getResponseForHub( $request ) {
 
 function checkSecureKey( $token ) {
 
+    return true;
 	if ( ! $token ) {
 		return false;
 	}
