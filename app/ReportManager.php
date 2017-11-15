@@ -35,7 +35,7 @@ Class ReportManager
                 $date_format = 'Y-m-d';
 
                 $complete_orders[$order->get_date_completed()->date($date_format)] =
-                    ($complete_orders[$order->get_date_completed()->date($date_format)]) ?
+                    (isset($complete_orders[$order->get_date_completed()->date($date_format)])) ?
                         $complete_orders[$order->get_date_completed()->date($date_format)] + 1 : 1;
 
             }
@@ -58,7 +58,7 @@ Class ReportManager
                 $date_format = 'Y-m-d';
 
                 $canceled_orders[$order->get_date_modified()->date($date_format)] =
-                    ($canceled_orders[$order->get_date_modified()->date($date_format)]) ?
+                    (isset($canceled_orders[$order->get_date_modified()->date($date_format)])) ?
                         $canceled_orders[$order->get_date_modified()->date($date_format)] + 1 : 1;
 
             }
