@@ -9,21 +9,40 @@
 Class ReportManager
 {
 
-    public static function getReport()
+    public static function getReport($data = null)
     {
+
 //        wc-cancelled
         try {
             $complete_orders = array();
             $canceled_orders = array();
             $total = 0;
 
-            // complete orders
-            $args = array(
+            if ($data) {
+                $args = array(
 //			        'post_type'      => wc_get_order_types(),
-                'post_type' => ['shop_order'],
-                'post_status' => ['wc-completed'],
-                'posts_per_page' => '-1'
-            );
+                    'post_type' => ['shop_order'],
+                    'post_status' => ['wc-completed'],
+                    'posts_per_page' => '-1',
+                    'date_query' => array(
+                        array(
+//                            2015-02-17 23:59:59
+                            'after'     => date('Y-m-d H:i:s', $data['start']),
+                            'before'    => date('Y-m-d H:i:s', $data['end']),
+                            'inclusive'=> true
+                        )
+                    )
+                );
+            }
+            else{
+                $args = array(
+//			        'post_type'      => wc_get_order_types(),
+                    'post_type' => ['shop_order'],
+                    'post_status' => ['wc-completed'],
+                    'posts_per_page' => '-1',
+                );
+
+            }
 
             $loop1 = new WP_Query($args);
 
@@ -43,12 +62,32 @@ Class ReportManager
             wp_reset_postdata();
 
             // wc-cancelled orders
-            $args = array(
+            if ($data) {
+                $args = array(
 //			        'post_type'      => wc_get_order_types(),
-                'post_type' => ['shop_order'],
-                'post_status' => ['wc-cancelled'],
-                'posts_per_page' => '-1'
-            );
+                    'post_type' => ['shop_order'],
+                    'post_status' => ['wc-cancelled'],
+                    'posts_per_page' => '-1',
+                    'date_query' => array(
+                        array(
+//                            2015-02-17 23:59:59
+                            'after'     => date('Y-m-d H:i:s', $data['start']),
+                            'before'    => date('Y-m-d H:i:s', $data['end']),
+                            'inclusive'=> true
+                        )
+                    )
+                );
+            }
+            else{
+                $args = array(
+//			        'post_type'      => wc_get_order_types(),
+                    'post_type' => ['shop_order'],
+                    'post_status' => ['wc-cancelled'],
+                    'posts_per_page' => '-1',
+
+                );
+            }
+
 
             $loop2 = new WP_Query($args);
             while ($loop2->have_posts()) {
@@ -78,32 +117,60 @@ Class ReportManager
 
             //all customers
             $args = [
-                'role' => 'customer'
+                'role' => 'customer',
+                'date_query' => array(
+                    array(
+//                            2015-02-17 23:59:59
+                        'after'     => date('Y-m-d H:i:s', $data['start']),
+                        'before'    => date('Y-m-d H:i:s', $data['end']),
+                        'inclusive'=> true
+                    )
+                )
             ];
 
             $my_user_query = new WP_User_Query($args);
             $customers = $my_user_query->get_results();
 
+            $data_temp = [];
+            $data_temp[] = [
+                'orders' => [
+                    'all' => [
+                        'completed' => $complete_orders,
+                        'canceled' => $canceled_orders,
+                        'total' => $total
+                    ],
+                    'per_month' => [
+                        'completed' => $complete_orders,
+                        'canceled' => $canceled_orders,
+                    ]
+
+                ],
+                'customers' => [
+                    'all' => count($customers),
+                    'per_month' => count($customers_per_month)
+                ]];
+
+            $data_temp = [
+                'orders' => [
+                    'all' => [
+                        'completed' => $complete_orders,
+                        'canceled' => $canceled_orders,
+                        'total' => $total
+                    ],
+                    'per_month' => [
+                        'completed' => $complete_orders,
+                        'canceled' => $canceled_orders,
+                    ]
+
+                ],
+                'customers' => [
+                    'all' => count($customers),
+                    'per_month' => count($customers_per_month)
+                ]
+            ];
 
             $response = [
-                'data' => [
-                    'orders' => [
-                        'all' => [
-                            'completed' => $complete_orders,
-                            'canceled' => $canceled_orders,
-                            'total' => $total
-                        ],
-                        'per_month' => [
-                            'completed' => $complete_orders,
-                            'canceled' => $canceled_orders,
-                        ]
-
-                    ],
-                    'customers' => [
-                        'all' => count($customers),
-                        'per_month' => count($customers_per_month)
-                    ],
-                ],
+                'data' => $data_temp,
                 'error' => ''
             ];
         } catch (\Exception $e) {

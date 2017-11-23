@@ -141,8 +141,12 @@ function getResponseForHub( $request ) {
         //save settings
 
         case BASE_HUB_API_URI . 'report/get':
+            if( $request['method'] == 'POST') {
+                $response = ReportManager::getReport($request['data']);
+            }else{
+                $response = ReportManager::getReport();
+            }
 
-            $response = ReportManager::getReport();
 
             break;
 
@@ -156,7 +160,6 @@ function getResponseForHub( $request ) {
 }
 
 function checkSecureKey( $token ) {
-
 
 	if ( ! $token ) {
 		return false;
