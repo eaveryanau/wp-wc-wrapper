@@ -27,14 +27,13 @@ Class ReportManager
                     'date_query' => array(
                         array(
 //                            2015-02-17 23:59:59
-                            'after'     => date('Y-m-d H:i:s', $data['start']),
-                            'before'    => date('Y-m-d H:i:s', $data['end']),
-                            'inclusive'=> true
+                            'after' => date('Y-m-d H:i:s', $data['start']),
+                            'before' => date('Y-m-d H:i:s', $data['end']),
+                            'inclusive' => true
                         )
                     )
                 );
-            }
-            else{
+            } else {
                 $args = array(
 //			        'post_type'      => wc_get_order_types(),
                     'post_type' => ['shop_order'],
@@ -49,6 +48,7 @@ Class ReportManager
             while ($loop1->have_posts()) {
                 $loop1->the_post();
                 $order = new WC_Order(get_the_ID());
+                $orders [] = $order;
                 $total += $order->get_total();
 
                 $date_format = 'Y-m-d';
@@ -58,7 +58,6 @@ Class ReportManager
                         $complete_orders[$order->get_date_completed()->date($date_format)] + 1 : 1;
 
             }
-
             wp_reset_postdata();
 
             // wc-cancelled orders
@@ -71,14 +70,13 @@ Class ReportManager
                     'date_query' => array(
                         array(
 //                            2015-02-17 23:59:59
-                            'after'     => date('Y-m-d H:i:s', $data['start']),
-                            'before'    => date('Y-m-d H:i:s', $data['end']),
-                            'inclusive'=> true
+                            'after' => date('Y-m-d H:i:s', $data['start']),
+                            'before' => date('Y-m-d H:i:s', $data['end']),
+                            'inclusive' => true
                         )
                     )
                 );
-            }
-            else{
+            } else {
                 $args = array(
 //			        'post_type'      => wc_get_order_types(),
                     'post_type' => ['shop_order'],
@@ -121,9 +119,9 @@ Class ReportManager
                 'date_query' => array(
                     array(
 //                            2015-02-17 23:59:59
-                        'after'     => date('Y-m-d H:i:s', $data['start']),
-                        'before'    => date('Y-m-d H:i:s', $data['end']),
-                        'inclusive'=> true
+                        'after' => date('Y-m-d H:i:s', $data['start']),
+                        'before' => date('Y-m-d H:i:s', $data['end']),
+                        'inclusive' => true
                     )
                 )
             ];
@@ -179,6 +177,129 @@ Class ReportManager
 
         return $response;
 
+    }
+
+    public static function getCategoryReport($data = null)
+    {
+        try {
+            if ($data) {
+                $args = array(
+//			        'post_type'      => wc_get_order_types(),
+                    'post_type' => ['shop_order'],
+                    'post_status' => ['wc-completed'],
+                    'posts_per_page' => '-1',
+                    'date_query' => array(
+                        array(
+//                            2015-02-17 23:59:59
+                            'after' => date('Y-m-d H:i:s', $data['start']),
+                            'before' => date('Y-m-d H:i:s', $data['end']),
+                            'inclusive' => true
+                        )
+                    )
+                );
+            } else {
+                $args = array(
+//			        'post_type'      => wc_get_order_types(),
+                    'post_type' => ['shop_order'],
+                    'post_status' => ['wc-completed'],
+                    'posts_per_page' => '-1',
+                );
+
+            }
+
+
+            $categories = [];
+            $response = [];
+            $orders = [];
+            $loop1 = new WP_Query($args);
+
+            $all_cat = [];
+            $date_format = 'Y-m-d';
+            while ($loop1->have_posts()) {
+                $loop1->the_post();
+                $order = new WC_Order(get_the_ID());
+                $items = $order->get_items();
+                $itms = [];
+                $arr_terms_id = [];
+                foreach ($items as $it) {
+                    $terms = get_the_terms($it->get_product_id(), 'product_cat');
+
+//                $arr_terms_id = [];
+                    foreach ($terms as $term) {
+                        $all_cat[] = $term->term_id;
+                        $arr_terms_id[] = $term->term_id;
+//                    if (!in_array($term->term_id, $categories)) {
+                        $flag = true;
+                        foreach ($categories as $c) {
+                            if ($c['id'] == $term->term_id) {
+                                $flag = false;
+                            }
+                        }
+                        if ($flag) {
+                            $categories[] =
+                                [
+                                    'id' => $term->term_id,
+                                    'name' => $term->name,
+                                    'count' => 0,
+                                    'date' => null,
+                                ];
+                        }
+
+                    }
+                    $itms = array_unique($arr_terms_id);
+                }
+
+                $orders [] = [
+                    'id' => $order->get_id(),
+                    'total' => $order->get_total(),
+                    'items' => $itms,
+                    'date' => $order->get_date_completed()->date($date_format)
+                ];
+            }
+
+
+            $i = 0;
+            foreach ($categories as $category) {
+                foreach ($orders as $or) {
+                    if (in_array($category['id'], $or['items'])) {
+                        $category['count'] += 1;
+                        $category['total'] += $or['total'];
+                        if (isset($category['date'][$or['date']])) {
+                            $category['date'][$or['date']] += 1;
+                        } else {
+                            $category['date'][$or['date']] = 1;
+                        }
+                    } else {
+//                    $category['count'] += 1;
+                        $category['date'][$or['date']] = 0;
+                    }
+                }
+                ksort($category['date']);
+                $response[] = $category;
+                $i++;
+                if ($i == 5) {
+                    break;
+                }
+            }
+
+            $t = true;
+            while ($t) {
+                $t = false;
+                for ($i = 0; $i < count($response) - 1; $i++) {
+                    if ($response[$i]['count'] < $response[$i + 1]['count']) {
+                        $temp = $response[$i + 1];
+                        $response[$i + 1] = $response[$i];
+                        $response[$i] = $temp;
+                        $t = true;
+                    }
+                }
+            }
+
+            $out_response = ['data' => $response, 'error' => ''];
+        } catch (\Exception $e) {
+            $out_response = ['data' => '', 'error' => 'Internal error into OrderManager::getOrders()'];
+        }
+        return $out_response;
     }
 
 }

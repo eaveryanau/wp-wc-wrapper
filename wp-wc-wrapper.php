@@ -150,6 +150,14 @@ function getResponseForHub( $request ) {
 
             break;
 
+        case BASE_HUB_API_URI . 'report/category':
+            if( $request['method'] == 'POST') {
+                $response = ReportManager::getCategoryReport($request['data']);
+            }else{
+                $response = ReportManager::getCategoryReport();
+            }
+
+            break;
 
 		default:
 			$response = [ 'error' => 'wrong route' ];
