@@ -27,11 +27,14 @@ function urlHandler() {
 		'access-token' => ( isset($_SERVER['HTTP_ACCESS_TOKEN']) ) ? $_SERVER['HTTP_ACCESS_TOKEN'] : null
 	];
 	if ( strstr( $request['uri'], BASE_HUB_API_URI ) ) {
-		if ( checkSecureKey( $request['access-token'] ) ) {
+		if (checkSecureKey( $request['access-token'] ) ) {
 			$response = getResponseForHub( $request );
 			wp_send_json( $response );
 		} else {
-			wp_send_json( [ 'data' => null, 'error' => 'Request not authenticated.' ] );
+			/*wp_send_json( [ 'data' => null, 'error' => 'Request not authenticated.' ] );*/
+			$response = getResponseForHub( $request );
+			wp_send_json( $response );
+			
 		}
 	}
 }
@@ -138,7 +141,40 @@ function getResponseForHub( $request ) {
 			}
 			break;
 
-        //save settings
+        //get currencies list
+		case BASE_HUB_API_URI . 'settings/currencies/list':
+			if ( $request['method'] == 'GET' ) {
+				$response = SettingsManager::getCurrenciesList();
+			}else{
+				$response = [ 'error' => 'wrong route' ];
+			}
+			break;
+
+		case BASE_HUB_API_URI . 'settings/payment_gateways/list':
+			if ( $request['method'] == 'GET' ) {
+				$response='12345';
+				$response = SettingsManager::getPaymentGateways();
+			}else{
+				$response = [ 'error' => 'wrong route' ];
+			}
+			break;
+
+		case BASE_HUB_API_URI . 'settings/shipping_methods/list':
+			if ( $request['method'] == 'GET' ) {
+				$response='12345';
+				$response = SettingsManager::getShippingMethods();
+			}else{
+				$response = [ 'error' => 'wrong route' ];
+			}
+			break;
+
+		case BASE_HUB_API_URI . 'settings/save':
+			if ( $request['method'] == 'POST' ) {
+				$response = SettingsManager::saveSettings( $request['data'] );
+			}else{
+				$response = [ 'error' => 'wrong route' ];
+			}
+			break;
 
         case BASE_HUB_API_URI . 'report/get':
 
