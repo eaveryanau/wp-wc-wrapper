@@ -31,10 +31,7 @@ function urlHandler() {
 			$response = getResponseForHub( $request );
 			wp_send_json( $response );
 		} else {
-			/*wp_send_json( [ 'data' => null, 'error' => 'Request not authenticated.' ] );*/
-			$response = getResponseForHub( $request );
-			wp_send_json( $response );
-			
+			wp_send_json( [ 'data' => null, 'error' => 'Request not authenticated.' ] );
 		}
 	}
 }
