@@ -84,7 +84,8 @@ function sendProductStockUpdatedRequest($product_id){
 }
 
 function sendProductPublishedRequest(){
-
+	$HUB_URL='http://devhub.funkyweb.biz';
+	$API_PATH='/api/product/published/';
 	$store_url=getAddress();
 	$status=wp_safe_remote_post($HUB_URL.$API_PATH,array(
 			'method' => 'POST',
