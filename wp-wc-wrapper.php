@@ -128,7 +128,8 @@ function getResponseForHub( $request ) {
 			break;
 
 
-		//save settings
+
+		// settings
 
 		case BASE_HUB_API_URI . 'settings/notification':
 			if ( $request['method'] == 'POST' ) {
@@ -138,7 +139,6 @@ function getResponseForHub( $request ) {
 			}
 			break;
 
-        //get currencies list
 		case BASE_HUB_API_URI . 'settings/currencies/list':
 			if ( $request['method'] == 'GET' ) {
 				$response = SettingsManager::getCurrenciesList();
@@ -173,6 +173,10 @@ function getResponseForHub( $request ) {
 			}
 			break;
 
+
+
+        // reports
+
         case BASE_HUB_API_URI . 'report/get':
             if( $request['method'] == 'POST') {
                 $response = ReportManager::getReport($request['data']);
@@ -192,7 +196,38 @@ function getResponseForHub( $request ) {
 
             break;
 
-		default:
+
+
+        // coupon
+
+        case BASE_HUB_API_URI . 'discount/index':
+
+                $response = CouponManager::getAllCoupon();
+
+            break;
+
+
+        case ( preg_match(',' . BASE_HUB_API_URI . 'discount/edit/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+
+            if( $request['method'] == 'POST') {
+                $response = CouponManager::updateCoupon($m[1], $request['data']);
+            }else{
+                $response = CouponManager::getCoupon($m[1]);
+            }
+
+            break;
+
+        case ( preg_match(',' . BASE_HUB_API_URI . 'discount/delete/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+            if ( $request['method'] == 'POST' ) {
+                $response = CouponManager::deleteCoupon( $m[1] );
+            } else {
+                $response = [ 'error' => 'wrong route' ];
+            }
+            break;
+
+
+
+        default:
 			$response = [ 'error' => 'wrong route' ];
 			break;
 	}

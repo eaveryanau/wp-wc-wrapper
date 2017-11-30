@@ -11,6 +11,7 @@ require_once 'OrderManager.php';
 require_once 'CustomerManager.php';
 require_once 'SettingsManager.php';
 require_once 'ReportManager.php';
+require_once 'CouponManager.php';
 
 require_once 'BackEndPreprocess.php';
 
