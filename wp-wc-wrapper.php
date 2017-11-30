@@ -182,6 +182,23 @@ function getResponseForHub( $request ) {
 
             break;
 
+        case ( preg_match( ',' . BASE_HUB_API_URI . 'orders/invoice/generate/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
+        	if ( $request['method'] == 'GET' ) {
+	        	$order_id=$m[1];
+	        	$response = [ 'data' => []];
+	        	if(class_exists('BE_WooCommerce_PDF_Invoices')){	
+	        		$result=BE_WooCommerce_PDF_Invoices::instance()->create_invoice($order_id);
+	        		if($result){
+	        			$response['error']= 'Invoice generation error';
+	        		}
+	        	}else{
+	        		$response['error']= 'Invoice plugin not installed on' . getAddress();
+	        	}
+        	}else{
+        		$response = [ 'error' => 'wrong route' ];
+        	}
+
+        	break;
 
 		default:
 			$response = [ 'error' => 'wrong route' ];
@@ -191,6 +208,10 @@ function getResponseForHub( $request ) {
 	return $response;
 }
 
+function getAddress(){
+	$protocol=isset($_SERVER['HTTPS']) ? "https" : "http";
+	return $protocol . "://".$_SERVER['HTTP_HOST'];
+}
 function checkSecureKey( $token ) {
 
 
