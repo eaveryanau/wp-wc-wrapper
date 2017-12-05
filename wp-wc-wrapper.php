@@ -105,28 +105,27 @@ function getResponseForHub( $request ) {
 		//customer
 
 		case BASE_HUB_API_URI . 'customers/index':
-			$response = CustomerManager::getCustomers();
+			$response = UserManager::getUsers();
 			break;
 
 		case ( preg_match( ',' . BASE_HUB_API_URI . 'customers/view/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
-			$response = CustomerManager::getCustomer( $m[1] );
+			$response = UserManager::getCustomer( $m[1] );
 			break;
 
 		case ( preg_match( ',' . BASE_HUB_API_URI . 'customers/edit/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
 			if ( $request['method'] == 'POST' ) {
-				$response = CustomerManager::updateCustomer( $m[1], $request['data'] );
+				$response = UserManager::updateCustomer( $m[1], $request['data'] );
 			} else {
-				$response = CustomerManager::getCustomer( $m[1] );
+				$response = UserManager::getCustomer( $m[1] );
 			}
 			break;
 		case ( preg_match( ',' . BASE_HUB_API_URI . 'customers/delete/([0-9]+$),', $request['uri'], $m ) ? true : false ) :
 			if ( $request['method'] == 'POST' ) {
-				$response = CustomerManager::deleteCustomer( $m[1] );
+				$response = UserManager::deleteCustomer( $m[1] );
 			} else {
 				$response = [ 'error' => 'wrong route' ];
 			}
 			break;
-
 
 
 		// settings
@@ -225,6 +224,25 @@ function getResponseForHub( $request ) {
             }
             break;
 
+
+        // Admins
+
+        case BASE_HUB_API_URI . 'admins/index':
+
+            $response = UserManager::getUsers(['administrator', 'editor']);
+
+            break;
+
+
+        case BASE_HUB_API_URI . 'user/create':
+            if ( $request['method'] == 'POST' ) {
+                $response = UserManager::createUsers($request['data']);
+            } else {
+                $response = [ 'error' => 'wrong route' ];
+            }
+
+
+            break;
 
 
         default:
