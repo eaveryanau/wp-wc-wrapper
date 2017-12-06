@@ -68,7 +68,7 @@ Class OrderManager
                     ],
                     'ship' => $order->get_formatted_shipping_address(),
                     'customer_note' => $order->get_customer_note(),
-                    'date' =>  $date_created,
+                    'date' => $date_created,
                     'total' => $order->get_formatted_order_total(),
                     'payment_method' => $order->get_payment_method_title(),
                     'items' => $itms
@@ -254,15 +254,15 @@ Class OrderManager
 
             //items
             $order_line_items = $order->get_items();
-            foreach ($order_line_items as $old_it){
+            foreach ($order_line_items as $old_it) {
                 $hold_item = false;
-                foreach ($data['line_items'] as $new_it){
-                    if($old_it->get_id() == $new_it['order_item_id']){
+                foreach ($data['line_items'] as $new_it) {
+                    if ($old_it->get_id() == $new_it['order_item_id']) {
                         $hold_item = true;
                         break;
                     }
                 }
-                if(!$hold_item){
+                if (!$hold_item) {
                     $order->remove_item($old_it->get_id());
                 }
             }

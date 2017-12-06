@@ -103,7 +103,7 @@ function getResponseForHub($request)
             break;
 
 
-        //customer
+        //customer (admins)
 
         case BASE_HUB_API_URI . 'customers/index':
             $response = UserManager::getUsers();
@@ -120,9 +120,9 @@ function getResponseForHub($request)
                 $response = UserManager::getCustomer($m[1]);
             }
             break;
-        case (preg_match(',' . BASE_HUB_API_URI . 'customers/delete/([0-9]+$),', $request['uri'], $m) ? true : false) :
+        case ((preg_match(',' . BASE_HUB_API_URI . 'admins/delete/([0-9]+$),', $request['uri'], $m) ? true : false) || (preg_match(',' . BASE_HUB_API_URI . 'customers/delete/([0-9]+$),', $request['uri'], $m) ? true : false)) :
             if ($request['method'] == 'POST') {
-                $response = UserManager::deleteCustomer($m[1]);
+                $response = UserManager::deleteUser($m[1]);
             } else {
                 $response = ['error' => 'wrong route'];
             }
@@ -150,7 +150,6 @@ function getResponseForHub($request)
 
         case BASE_HUB_API_URI . 'settings/payment_gateways/list':
             if ($request['method'] == 'GET') {
-                $response = '12345';
                 $response = SettingsManager::getPaymentGateways();
             } else {
                 $response = ['error' => 'wrong route'];
@@ -159,7 +158,6 @@ function getResponseForHub($request)
 
         case BASE_HUB_API_URI . 'settings/shipping_methods/list':
             if ($request['method'] == 'GET') {
-                $response = '12345';
                 $response = SettingsManager::getShippingMethods();
             } else {
                 $response = ['error' => 'wrong route'];
@@ -241,8 +239,8 @@ function getResponseForHub($request)
                 $response = ['error' => 'wrong route'];
             }
 
-
             break;
+
 
         case (preg_match(',' . BASE_HUB_API_URI . 'orders/invoice/generate/([0-9]+$),', $request['uri'], $m) ? true : false) :
             if ($request['method'] == 'GET') {
@@ -278,7 +276,6 @@ function getAddress()
 
 function checkSecureKey($token)
 {
-
     if (!$token) {
         return false;
     }

@@ -120,14 +120,19 @@ Class UserManager
 
     }
 
-    public static function deleteCustomer($id)
+    public static function deleteUser($id)
     {
 
-        require_once(ABSPATH . 'wp-admin/includes/user.php');
+        if($id == 1){
+            $response = ['data' => [], 'error' => 'Superadmin can not delete!'];
+        }
+        else{
+            require_once(ABSPATH . 'wp-admin/includes/user.php');
 
-        $is_customer_delete = wp_delete_user($id);
+            $is_customer_delete = wp_delete_user($id);
 
-        $response = ($is_customer_delete) ? ['data' => ['customer deleted'], 'error' => ''] : ['data' => [], 'error' => 'not delete'];
+            $response = ($is_customer_delete) ? ['data' => ['user deleted'], 'error' => ''] : ['data' => [], 'error' => 'not delete'];
+        }
 
         return $response;
     }
@@ -135,19 +140,18 @@ Class UserManager
     public static function createUsers($data)
     {
 
-        try{
+        try {
             $user_id = username_exists($data['user_data']['username']);
             if (!$user_id and email_exists($data['user_data']['email']) == false) {
                 $user_id = wp_create_user($data['user_data']['username'], $data['user_data']['password'], $data['user_data']['email']);
-                if($data['user_data']['role'] == 'customer'){
+                if ($data['user_data']['role'] == 'customer') {
                     $customer = new WC_Customer($user_id);
                     $customer->set_billing_address($data['user_data']['address']);
                     $customer->set_billing_phone($data['user_data']['phone']);
                     $customer->set_first_name($data['user_data']['firstname']);
                     $customer->set_last_name($data['user_data']['lastname']);
                     $customer->save();
-                }
-                else {
+                } else {
                     $user_id_role = new WP_User($user_id);
                     $user_id_role->set_role($data['user_data']['role']);
                 }
@@ -182,4 +186,5 @@ Class UserManager
 
         return $response;
     }
+
 }
