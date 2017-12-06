@@ -123,10 +123,9 @@ Class UserManager
     public static function deleteUser($id)
     {
 
-        if($id == 1){
+        if ($id == 1) {
             $response = ['data' => [], 'error' => 'Superadmin can not delete!'];
-        }
-        else{
+        } else {
             require_once(ABSPATH . 'wp-admin/includes/user.php');
 
             $is_customer_delete = wp_delete_user($id);
@@ -139,7 +138,6 @@ Class UserManager
 
     public static function createUsers($data)
     {
-
         try {
             $user_id = username_exists($data['user_data']['username']);
             if (!$user_id and email_exists($data['user_data']['email']) == false) {
@@ -184,6 +182,44 @@ Class UserManager
             $response = ['data' => '', 'error' => 'Internal error into UserManager::createUsers()'];
         }
 
+        return $response;
+    }
+
+    public static function getUser($id)
+    {
+        try {
+            $user = get_user_by('id', $id);
+            if ($user) {
+                $data = [
+                    'id' => $user->ID,
+                    'username' => $user->user_login,
+                    'email' => $user->user_email,
+                    'role' => $user->roles[0]
+                ];
+                $response = ['data' => $data, 'error' => ''];
+            } else {
+                $response = ['data' => '', 'error' => 'not found user'];
+            }
+        } catch (\Exception $ex) {
+            $response = ['data' => '', 'error' => 'Internal error into UserManager::getUser()'];
+        }
+
+        return $response;
+    }
+
+    public static function updatePassword($id, $data)
+    {
+        try {
+            $user = get_user_by('id', $id);
+            if ($user) {
+                wp_set_password($data['plainPassword'], $id);
+                $response = ['data' => ['password changed'], 'error' => ''];
+            } else {
+                $response = ['data' => '', 'error' => 'not found user'];
+            }
+        } catch (\Exception $ex) {
+            $response = ['data' => '', 'error' => 'Internal error into UserManager::updatePassword()'];
+        }
         return $response;
     }
 

@@ -120,6 +120,7 @@ function getResponseForHub($request)
                 $response = UserManager::getCustomer($m[1]);
             }
             break;
+
         case ((preg_match(',' . BASE_HUB_API_URI . 'admins/delete/([0-9]+$),', $request['uri'], $m) ? true : false) || (preg_match(',' . BASE_HUB_API_URI . 'customers/delete/([0-9]+$),', $request['uri'], $m) ? true : false)) :
             if ($request['method'] == 'POST') {
                 $response = UserManager::deleteUser($m[1]);
@@ -226,11 +227,18 @@ function getResponseForHub($request)
         // Admins
 
         case BASE_HUB_API_URI . 'admins/index':
-
             $response = UserManager::getUsers(['administrator', 'editor']);
 
             break;
 
+        case (preg_match(',' . BASE_HUB_API_URI . 'admins/edit/([0-9]+$),', $request['uri'], $m) ? true : false) :
+            if ($request['method'] == 'POST') {
+                $response = UserManager::updatePassword($m[1], $request['data']);
+            } else {
+                $response = UserManager::getUser($m[1]);
+            }
+
+            break;
 
         case BASE_HUB_API_URI . 'user/create':
             if ($request['method'] == 'POST') {
