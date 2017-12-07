@@ -213,14 +213,18 @@ Class OrderManager
 
     public static function updateOrder($id, $data)
     {
+        try{
+            $order = WC_Order_Factory::get_order($id);
 
-        $order = WC_Order_Factory::get_order($id);
-
-        if (self::setAttribute($order, $data)) {
-            $response = ['data' => ['Order updated'], 'error' => ''];
-        } else {
-            $response = ['data' => '', 'error' => 'Order not updated'];
+            if (self::setAttribute($order, $data)) {
+                $response = ['data' => ['Order updated'], 'error' => ''];
+            } else {
+                $response = ['data' => '', 'error' => 'Order not updated'];
+            }
+        } catch (\Exception $e) {
+            $response = ['data' => '', 'error' => 'Internal error into OrderManager::updateOrder() (id=' . $id . ')'];
         }
+
 
         return $response;
 
@@ -231,7 +235,7 @@ Class OrderManager
 
         try {
             $order->set_status($data['status']);
-            $order->set_currency($data['currency']);
+//            $order->set_currency($data['currency']);
 //            $order->set_discount_total($data['discount_total']);
 //            $order->set_discount_tax($data['discount_tax']);
 //            $order->set_shipping_total($data['shipping_total']);
@@ -240,17 +244,17 @@ Class OrderManager
 //            $order->set_total($data['total']);
 
             // billing
-            $order->set_billing_first_name($data['billing']['first_name']);
-            $order->set_billing_last_name($data['billing']['last_name']);
+//            $order->set_billing_first_name($data['billing']['first_name']);
+//            $order->set_billing_last_name($data['billing']['last_name']);
 //            $order->set_billing_company($data['billing']['company']);
-            $order->set_billing_address_1($data['billing']['address_1']);
-            $order->set_billing_address_2($data['billing']['address_2']);
+//            $order->set_billing_address_1($data['billing']['address_1']);
+//            $order->set_billing_address_2($data['billing']['address_2']);
 //            $order->set_billing_city($data['billing']['city']);
 //            $order->set_billing_state($data['billing']['state']);
 //            $order->set_billing_postcode($data['billing']['postcode']);
 //            $order->set_billing_country($data['billing']['country']);
-            $order->set_billing_email($data['billing']['email']);
-            $order->set_billing_phone($data['billing']['phone']);
+//            $order->set_billing_email($data['billing']['email']);
+//            $order->set_billing_phone($data['billing']['phone']);
 
             //items
             $order_line_items = $order->get_items();
@@ -294,7 +298,7 @@ Class OrderManager
 
 //            $order->set_date_completed($data['date_order']['completed']);
 //            $order->set_date_paid($data['date_order']['paid']);
-            $order->set_date_created($data['date_order']['created']);
+//            $order->set_date_created($data['date_order']['created']);
 //            $order->set_date_modified($data['date_order']['modified']);
             $order->save();
 
