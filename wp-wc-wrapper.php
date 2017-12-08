@@ -67,6 +67,14 @@ function getResponseForHub($request)
             }
             break;
 
+        case BASE_HUB_API_URI . 'products/create' :
+            if ($request['method'] == 'POST') {
+                $response = ProductManager::createProduct($request['data']);
+            } else {
+                $response = ProductManager::getProduct(null);
+            }
+            break;
+
         case BASE_HUB_API_URI . 'orders/index':
             $response = OrderManager::getOrders();
             break;
