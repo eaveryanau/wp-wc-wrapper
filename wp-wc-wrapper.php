@@ -44,7 +44,7 @@ function getResponseForHub($request)
 
         // Done.
         case BASE_HUB_API_URI . 'products/index':
-            $response = ProductManager::getProducts();
+            $response = ProductManager::getProducts($request['data']);
             break;
 
         case (preg_match(',' . BASE_HUB_API_URI . 'products/view/([0-9]+$),', $request['uri'], $m) ? true : false) :
@@ -273,6 +273,13 @@ function getResponseForHub($request)
             } else {
                 $response = ['error' => 'wrong route'];
             }
+
+            break;
+
+        // Categories
+
+        case BASE_HUB_API_URI . 'categories/index':
+            $response = ProductManager::getCategories();
 
             break;
 

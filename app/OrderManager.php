@@ -61,6 +61,8 @@ Class OrderManager
                 $orders[] = [
                     'id' => get_the_ID(),
                     'status' => $order->get_status(),
+                    'user_id' => $order->get_user_id(),
+                    'user_role' => $order->get_user()->roles[0],
                     'billing' => [
                         'first_name' => $order->get_billing_first_name(),
                         'last_name' => $order->get_billing_last_name(),
