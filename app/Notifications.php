@@ -1,4 +1,5 @@
 <?php
+define( 'HUB_URL', 'http://devhub.funkyweb.biz' );
 
 add_action( 'woocommerce_new_order', 'event_new_order_placed');
 add_action( 'woocommerce_order_status_pending', 'event_order_pending');
@@ -53,7 +54,7 @@ function event_product_published($new_status, $old_status, $post){
             array( 'product') 
             )
         ) {
-          sendProductPublishedRequest();
+          sendProductPublishedRequest($post->ID);
      }
 }
 
@@ -65,11 +66,11 @@ function event_product_stock_updated($product){
 }
 
 function sendProductStockUpdatedRequest($product_id){
-	$HUB_URL='http://devhub.funkyweb.biz';
-	$API_PATH='/api/product/stock_updated/';
+	//$HUB_URL='http://devhub.funkyweb.biz';
+	$API_PATH='/api/stock/'.$product_id.'/updated';
 	$store_url=getAddress();
 
-	$status=wp_safe_remote_post($HUB_URL.$API_PATH,array(
+	$status=wp_safe_remote_post(HUB_URL.$API_PATH,array(
 			'method' => 'POST',
 			'timeout' => 45,
 			'redirection' => 5,
@@ -83,11 +84,11 @@ function sendProductStockUpdatedRequest($product_id){
 	);
 }
 
-function sendProductPublishedRequest(){
-	$HUB_URL='http://devhub.funkyweb.biz';
-	$API_PATH='/api/product/published/';
+function sendProductPublishedRequest($id){
+	//$HUB_URL='http://devhub.funkyweb.biz';
+	$API_PATH='/api/product/'.$id.'/published/';
 	$store_url=getAddress();
-	$status=wp_safe_remote_post($HUB_URL.$API_PATH,array(
+	$status=wp_safe_remote_post(HUB_URL.$API_PATH,array(
 			'method' => 'POST',
 			'timeout' => 45,
 			'redirection' => 5,
@@ -102,10 +103,10 @@ function sendProductPublishedRequest(){
 }
 
 function sendOrderStatusChangedRequest($order_id,$new_status){
-	$HUB_URL='http://devhub.funkyweb.biz';
+	//$HUB_URL='http://devhub.funkyweb.biz';
 	$API_PATH='/api/order/'.$order_id.'/change_status/';
 	$store_url=getAddress();
-	$status=wp_safe_remote_post($HUB_URL.$API_PATH,array(
+	$status=wp_safe_remote_post(HUB_URL.$API_PATH,array(
 			'method' => 'POST',
 			'timeout' => 45,
 			'redirection' => 5,
@@ -121,11 +122,11 @@ function sendOrderStatusChangedRequest($order_id,$new_status){
 
 function sendOrderCreatedRequest($order_id){
 
-	$HUB_URL='http://devhub.funkyweb.biz';
+	//$HUB_URL='http://devhub.funkyweb.biz';
 	$API_PATH='/api/order/register';
 	$order=OrderManager::getOrder($order_id);
 	$store_url=_getAddress();
-	$status=wp_safe_remote_post($HUB_URL.$API_PATH,array(
+	$status=wp_safe_remote_post(HUB_URL.$API_PATH,array(
 			'method' => 'POST',
 			'timeout' => 45,
 			'redirection' => 5,
@@ -140,21 +141,21 @@ function sendOrderCreatedRequest($order_id){
 }
 class TestNTF{
 	public static function sendOCR($order_data){
-		$HUB_URL='devhub.funkyweb.biz';
+		//$HUB_URL='http://devhub.funkyweb.biz';
 		$API_PATH='/api/order/register';
 		$order=OrderManager::getOrder('10');
 		$store_url=_getAddress();
-		$status=wp_safe_remote_post($HUB_URL.$API_PATH,array(
+		$status=wp_remote_post(HUB_URL.$API_PATH,array(
 			'method' => 'POST',
 			'timeout' => 45,
 			'redirection' => 5,
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => array(),
-			'body' => array('order'=>$order),
+			'body' => array('order'=>$order,'store_url'=>$store_url),
 			'cookies' => array()
     	));
-    	return $status;
+    	return $status['body'];
 
 	}
 }
