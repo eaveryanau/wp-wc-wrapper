@@ -11,11 +11,136 @@ Class SettingsManager
 
     public static function saveSettings($data)
     {
-        foreach ($data as $key => $value) {
-            $wc_key = 'woocommerce_' . $key;
-            $result = update_option($wc_key, $value);
-            return ['data' => ['result' => $result], 'error' => ''];
+
+        //currency
+
+        if(!update_option('woocommerce_currency', $data['currency'])){
+            return ['data' => '', 'error' => 'Failed update currency'];
         }
+
+        // payments
+
+        //bacs
+        if(in_array('bacs', $data['payments'])){
+            $data = unserialize(get_option('woocommerce_bacs_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_bacs_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_bacs_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_bacs_settings',serialize($data));
+        }
+
+        //cheque
+        if(in_array('cheque', $data['payments'])){
+            $data = unserialize(get_option('woocommerce_cheque_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_cheque_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_cheque_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_cheque_settings',serialize($data));
+        }
+
+        //cod
+        if(in_array('cod', $data['payments'])){
+            $data = unserialize(get_option('woocommerce_cod_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_cod_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_cod_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_cod_settings',serialize($data));
+        }
+
+        //paypal
+        if(in_array('paypal', $data['payments'])){
+            $data = unserialize(get_option('woocommerce_paypal-ec_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_paypal-ec_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_paypal-ec_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_paypal-ec_settings',serialize($data));
+        }
+
+        //payfort
+        if(in_array('payfort', $data['payments'])){
+            $data = unserialize(get_option('woocommerce_payfort_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_payfort_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_payfort_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_payfort_settings',serialize($data));
+        }
+
+        //sadaq
+        if(in_array('payfort_fort_sadad', $data['payments'])){
+            $data = unserialize(get_option('woocommerce_payfort_fort_sadad_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_payfort_fort_sadad_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_payfort_fort_sadad_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_payfort_fort_sadad_settings',serialize($data));
+        }
+
+        //naps
+        if(in_array('payfort_fort_qpay', $data['payments'])){
+            $data = unserialize(get_option('woocommerce_payfort_fort_qpay_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_payfort_fort_qpay_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_payfort_fort_qpay_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_payfort_fort_qpay_settings',serialize($data));
+        }
+
+        //shipping
+        //naqel
+        if(in_array('wc_naqel_shipping_method', $data['shipping'])){
+            $data = unserialize(get_option('woocommerce_wc_naqel_shipping_method_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_wc_naqel_shipping_method_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_wc_naqel_shipping_method_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_wc_naqel_shipping_method_settings',serialize($data));
+        }
+
+        //fetchr
+        if(in_array('wc_fetchr_shipping_method', $data['shipping'])){
+            $data = unserialize(get_option('woocommerce_wc_fetchr_shipping_method_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_wc_fetchr_shipping_method_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_wc_fetchr_shipping_method_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_wc_fetchr_shipping_method_settings',serialize($data));
+        }
+
+        //aramex
+        if(in_array('aramex', $data['shipping'])){
+            $data = unserialize(get_option('woocommerce_aramex_settings'));
+            $data['enabled'] = 'yes';
+            update_option('woocommerce_aramex_settings',serialize($data));
+        }
+        else{
+            $data = unserialize(get_option('woocommerce_aramex_settings'));
+            $data['enabled'] = 'no';
+            update_option('woocommerce_aramex_settings',serialize($data));
+        }
+        return ['data' => ['result' => 'successfully'], 'error' => ''];
     }
 
     public static function getCurrenciesList()
@@ -36,7 +161,8 @@ Class SettingsManager
 
     public static function getPaymentGateways()
     {
-        $gateways = WC()->payment_gateways->get_available_payment_gateways();
+        $gateways = WC()->payment_gateways->payment_gateways();
+//        $active_gateways = WC()->payment_gateways
         $result = [];
 
         foreach ($gateways as $key => $gateway) {

@@ -4,8 +4,8 @@ Plugin Name: WP WC wrapper
 Description: Universal hub data aggregator
 Version: 1.0
 Author: Averyanau Yauheni
-Author URI:
-Plugin URI:
+Author URI: https://github.com/eaveryanau
+Plugin URI: https://github.com/eaveryanau/wp-wc-wrapper
 */
 
 // Define constant.

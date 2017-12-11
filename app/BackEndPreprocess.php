@@ -19,6 +19,18 @@ function hub_options() {
 
 add_action( 'admin_menu', 'hub_options' );
 
+// Deafult shipping methods
+function delete_default_shipping_methods($methods) {
+
+    unset($methods['local_pickup']);
+    unset($methods['free_shipping']);
+    unset($methods['flat_rate']);
+
+    return $methods;
+}
+
+add_filter('woocommerce_shipping_methods', 'delete_default_shipping_methods');
+
 /**
  * Callback
  */
