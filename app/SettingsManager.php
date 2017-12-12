@@ -11,136 +11,142 @@ Class SettingsManager
 
     public static function saveSettings($data)
     {
-
         //currency
-
-        if(!update_option('woocommerce_currency', $data['currency'])){
-            return ['data' => '', 'error' => 'Failed update currency'];
+        if (get_option('woocommerce_currency') != $data['currency']) {
+            if (!update_option('woocommerce_currency', $data['currency'])) {
+                return ['data' => '', 'error' => 'Failed update currency'];
+            }
         }
 
-        // payments
 
-        //bacs
-        if(in_array('bacs', $data['payments'])){
-            $data = unserialize(get_option('woocommerce_bacs_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_bacs_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_bacs_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_bacs_settings',serialize($data));
-        }
+        try {
+            // payments
 
-        //cheque
-        if(in_array('cheque', $data['payments'])){
-            $data = unserialize(get_option('woocommerce_cheque_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_cheque_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_cheque_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_cheque_settings',serialize($data));
-        }
+//            if($data['payments']){
+                //bacs
+                if (in_array('bacs', $data['payments'])) {
+                    // return ['data' => ['bacs'], 'error' => ''];
+                    $dt = get_option('woocommerce_bacs_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_bacs_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_bacs_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_bacs_settings', $dt);
+                }
 
-        //cod
-        if(in_array('cod', $data['payments'])){
-            $data = unserialize(get_option('woocommerce_cod_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_cod_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_cod_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_cod_settings',serialize($data));
-        }
+                //cheque
+                if (in_array('cheque', $data['payments'])) {
+                    $dt = get_option('woocommerce_cheque_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_cheque_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_cheque_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_cheque_settings', $dt);
+                }
 
-        //paypal
-        if(in_array('paypal', $data['payments'])){
-            $data = unserialize(get_option('woocommerce_paypal-ec_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_paypal-ec_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_paypal-ec_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_paypal-ec_settings',serialize($data));
-        }
+                //cod
+                if (in_array('cod', $data['payments'])) {
+                    $dt = get_option('woocommerce_cod_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_cod_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_cod_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_cod_settings', $dt);
+                }
 
-        //payfort
-        if(in_array('payfort', $data['payments'])){
-            $data = unserialize(get_option('woocommerce_payfort_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_payfort_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_payfort_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_payfort_settings',serialize($data));
-        }
+                //paypal
+                if (in_array('paypal', $data['payments'])) {
+                    $dt = get_option('woocommerce_paypal-ec_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_paypal-ec_settings', $data);
+                } else {
+                    $dt = get_option('woocommerce_paypal-ec_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_paypal-ec_settings', $dt);
+                }
 
-        //sadaq
-        if(in_array('payfort_fort_sadad', $data['payments'])){
-            $data = unserialize(get_option('woocommerce_payfort_fort_sadad_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_payfort_fort_sadad_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_payfort_fort_sadad_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_payfort_fort_sadad_settings',serialize($data));
-        }
+                //payfort
+                if (in_array('payfort', $data['payments'])) {
+                    $dt = get_option('woocommerce_payfort_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_payfort_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_payfort_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_payfort_settings', $dt);
+                }
 
-        //naps
-        if(in_array('payfort_fort_qpay', $data['payments'])){
-            $data = unserialize(get_option('woocommerce_payfort_fort_qpay_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_payfort_fort_qpay_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_payfort_fort_qpay_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_payfort_fort_qpay_settings',serialize($data));
-        }
+                //sadaq
+                if (in_array('payfort_fort_sadad', $data['payments'])) {
+                    $dt = get_option('woocommerce_payfort_fort_sadad_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_payfort_fort_sadad_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_payfort_fort_sadad_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_payfort_fort_sadad_settings', $dt);
+                }
 
-        //shipping
-        //naqel
-        if(in_array('wc_naqel_shipping_method', $data['shipping'])){
-            $data = unserialize(get_option('woocommerce_wc_naqel_shipping_method_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_wc_naqel_shipping_method_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_wc_naqel_shipping_method_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_wc_naqel_shipping_method_settings',serialize($data));
-        }
+                //naps
+                if (in_array('payfort_fort_qpay', $data['payments'])) {
+                    $dt = get_option('woocommerce_payfort_fort_qpay_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_payfort_fort_qpay_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_payfort_fort_qpay_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_payfort_fort_qpay_settings', $dt);
+                }
+//            }
 
-        //fetchr
-        if(in_array('wc_fetchr_shipping_method', $data['shipping'])){
-            $data = unserialize(get_option('woocommerce_wc_fetchr_shipping_method_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_wc_fetchr_shipping_method_settings',serialize($data));
-        }
-        else{
-            $data = unserialize(get_option('woocommerce_wc_fetchr_shipping_method_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_wc_fetchr_shipping_method_settings',serialize($data));
-        }
 
-        //aramex
-        if(in_array('aramex', $data['shipping'])){
-            $data = unserialize(get_option('woocommerce_aramex_settings'));
-            $data['enabled'] = 'yes';
-            update_option('woocommerce_aramex_settings',serialize($data));
+            //shipping
+//            if($data['shipping']){
+                //naqel
+                if (in_array('wc_naqel_shipping_method', $data['shipping'])) {
+                    $dt = get_option('woocommerce_wc_naqel_shipping_method_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_wc_naqel_shipping_method_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_wc_naqel_shipping_method_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_wc_naqel_shipping_method_settings', $dt);
+                }
+
+                //fetchr
+                if (in_array('wc_fetchr_shipping_method', $data['shipping'])) {
+                    $dt = get_option('woocommerce_wc_fetchr_shipping_method_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_wc_fetchr_shipping_method_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_wc_fetchr_shipping_method_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_wc_fetchr_shipping_method_settings', $dt);
+                }
+
+                //aramex
+                if (in_array('aramex', $data['shipping'])) {
+                    $dt = get_option('woocommerce_aramex_settings');
+                    $dt['enabled'] = 'yes';
+                    update_option('woocommerce_aramex_settings', $dt);
+                } else {
+                    $dt = get_option('woocommerce_aramex_settings');
+                    $dt['enabled'] = 'no';
+                    update_option('woocommerce_aramex_settings', $dt);
+                }
+//            }
+//            else{
+//
+//            }
+
+            $response = ['data' => ['result' => 'successfully'], 'error' => ''];
+        } catch (\Exception $e) {
+            $response = ['data' => '', 'error' => 'Error with saving payments or shipping methods'];
         }
-        else{
-            $data = unserialize(get_option('woocommerce_aramex_settings'));
-            $data['enabled'] = 'no';
-            update_option('woocommerce_aramex_settings',serialize($data));
-        }
-        return ['data' => ['result' => 'successfully'], 'error' => ''];
+        return $response;
     }
 
     public static function getCurrenciesList()
