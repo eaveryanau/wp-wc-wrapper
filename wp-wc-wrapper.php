@@ -76,10 +76,10 @@ function getResponseForHub($request)
             break;
 
         case BASE_HUB_API_URI . 'orders/index':
-            $response = OrderManager::getOrders();
+            $response = OrderManager::getOrders(false, $request['data']);
             break;
         case BASE_HUB_API_URI . 'orders/archive':
-            $response = OrderManager::getOrders(true);
+            $response = OrderManager::getOrders(true, $request['data']);
             break;
 
         case (preg_match(',' . BASE_HUB_API_URI . 'orders/view/([0-9]+$),', $request['uri'], $m) ? true : false) :

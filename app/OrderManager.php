@@ -9,26 +9,65 @@
 Class OrderManager
 {
 
-    public static function getOrders($archive = false)
+    public static function getOrders($archive = false, $date_filter = null)
     {
-
         try {
             $orders = array();
 
-            if ($archive) {
-                $args = array(
+            if (isset($date_filter['filter'])) {
+
+                $after = isset($date_filter['filter']['date_start']) ? $date_filter['filter']['date_start'] : 0;
+                $before = isset($date_filter['filter']['date_end']) ? $date_filter['filter']['date_end'] : time();
+                if ($archive) {
+                    $args = array(
 //			        'post_type'      => wc_get_order_types(),
-                    'post_type' => ['shop_order'],
-                    'post_status' => 'trash',
-                    'posts_per_page' => '-1'
-                );
+                        'post_type' => ['shop_order'],
+                        'post_status' => 'trash',
+                        'posts_per_page' => '-1',
+                        'date_query' => array(
+                            array(
+//                            2015-02-17 23:59:59
+                                'after' => $after,
+                                'before' => $before,
+                                'inclusive' => true
+                            )
+                        )
+                    );
+                } else {
+                    $args = array(
+//			        'post_type'      => wc_get_order_types(),
+                        'post_type' => ['shop_order'],
+                        'post_status' => array_keys(wc_get_order_statuses()),
+                        'posts_per_page' => '-1',
+                        'date_query' => array(
+                            array(
+//                            2015-02-17 23:59:59
+                                'after' => $after,
+                                'before' => $before,
+                                'inclusive' => true
+                            )
+                        )
+                    );
+                }
+
             } else {
-                $args = array(
+
+                if ($archive) {
+                    $args = array(
 //			        'post_type'      => wc_get_order_types(),
-                    'post_type' => ['shop_order'],
-                    'post_status' => array_keys(wc_get_order_statuses()),
-                    'posts_per_page' => '-1'
-                );
+                        'post_type' => ['shop_order'],
+                        'post_status' => 'trash',
+                        'posts_per_page' => '-1'
+                    );
+                } else {
+                    $args = array(
+//			        'post_type'      => wc_get_order_types(),
+                        'post_type' => ['shop_order'],
+                        'post_status' => array_keys(wc_get_order_statuses()),
+                        'posts_per_page' => '-1'
+                    );
+                }
+
             }
 
             $loop = new WP_Query($args);
@@ -215,7 +254,7 @@ Class OrderManager
 
     public static function updateOrder($id, $data)
     {
-        try{
+        try {
             $order = WC_Order_Factory::get_order($id);
 
             if (self::setAttribute($order, $data)) {
