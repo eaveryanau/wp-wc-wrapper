@@ -17,7 +17,8 @@ Class OrderManager
             if (isset($date_filter['filter'])) {
 
                 $after = isset($date_filter['filter']['date_start']) ? $date_filter['filter']['date_start'] : 0;
-                $before = isset($date_filter['filter']['date_end']) ? $date_filter['filter']['date_end'] : time();
+                $before = isset($date_filter['filter']['date_end']) ? $date_filter['filter']['date_end'] . '23:59:59' : time();
+
                 if ($archive) {
                     $args = array(
 //			        'post_type'      => wc_get_order_types(),
