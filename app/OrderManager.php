@@ -14,6 +14,8 @@ Class OrderManager
         try {
             $orders = array();
 
+            $prefix = get_option( 'wc_order_prefix', true );
+
             if (isset($date_filter['filter'])) {
 
                 $after = isset($date_filter['filter']['date_start']) ? $date_filter['filter']['date_start'] : 0;
@@ -100,6 +102,7 @@ Class OrderManager
 
                 $orders[] = [
                     'id' => get_the_ID(),
+                    'unique_brand_number_id' => $prefix . get_the_ID(),
                     'status' => $order->get_status(),
                     'user_id' => $order->get_user_id(),
                     'user_role' => $order->get_user()->roles[0],
@@ -129,6 +132,7 @@ Class OrderManager
 
         try {
             $order = WC_Order_Factory::get_order($id);
+            $prefix = get_option( 'wc_order_prefix', true );
 
             // Items
             $items = $order->get_items();
@@ -218,6 +222,7 @@ Class OrderManager
                 'paid' => $date_paid,
                 'completed' => $date_complete
             ];
+            $order['unique_brand_number_id'] = $prefix. $order['id'];
             $order['line_items'] = $itms;
             $order['meta_data'] = $mt;
             $order['shipping_lines'] = $shipping_methods;

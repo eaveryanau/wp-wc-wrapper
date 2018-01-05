@@ -47,6 +47,8 @@ Class ProductManager
 
                 $products[] = [
                     'id' => $data['id'],
+                    'oracle_code' => get_post_meta($data['id'],'oracle_code', true),
+                    'warehouse_code' => get_post_meta($data['id'],'warehouse_code', true),
                     'image' => $product->get_image(),
                     'name' => $data['name'],
                     'sku' => $data['sku'],
@@ -107,6 +109,8 @@ public static function getProduct($id)
                 $categories [$ct->slug] = $ct->name;
             }
 
+            $data['oracle_code'] = get_post_meta($id,'oracle_code', true);
+            $data['warehouse_code'] = get_post_meta($id,'warehouse_code', true);
             $data['all_categories'] = $categories;
             $data['image'] = $product->get_image();
             $data['categories'] = $categories_name;
@@ -182,10 +186,25 @@ static function updateProduct($id, $data)
             $product->set_image_id($attach_id);
 
         }
+        if(empty($ct)){
+            wp_remove_object_terms($id, $product->get_category_ids(), 'product_cat');
+        }
+        if(!isset($data['warehouse_code'])){
+            update_post_meta($id, 'warehouse_code', '');
+        }
+        if(!isset($data['oracle_code'])){
+            update_post_meta($id, 'oracle_code', '');
+        }
 
         foreach ($data as $prop => $val) {
+            if($prop == 'warehouse_code' || $prop == 'oracle_code'){
+                update_post_meta($id, $prop, $val);
+                continue;
+            }
             if ($prop == 'categories') {
-                $product->set_category_ids($ct);
+                if(!empty($ct)){
+                    $product->set_category_ids($ct);
+                }
             } else {
                 if ($prop == 'stock_quantity') {
                     if (!empty($val) || $val > 0) {
@@ -281,8 +300,14 @@ static function createProduct($data)
         }
 
         foreach ($data as $prop => $val) {
+            if($prop == 'warehouse_code' || $prop == 'oracle_code'){
+                update_post_meta($post_id, $prop, $val);
+                continue;
+            }
             if ($prop == 'categories') {
-                $product->set_category_ids($ct);
+                if(!empty($ct)){
+                    $product->set_category_ids($ct);
+                }
             } else {
                 if ($prop == 'stock_quantity') {
                     if (!empty($val) || $val > 0) {

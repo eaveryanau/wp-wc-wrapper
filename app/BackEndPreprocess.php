@@ -228,3 +228,45 @@ function my_new_wc_order_statuses( $order_statuses ) {
 
 	return $order_statuses;
 }
+
+add_action( 'woocommerce_settings_general_options_after', function(){
+    woocommerce_admin_fields( array(
+        array(
+            'name' => __( 'Order prefix', 'woocommerce' ),
+            'type' => 'title',
+            'id' => 'wc_order_number_options'
+        ),
+        array(
+            'name' 		=> __( 'Order number prefix', 'woocommerce' ),
+            'desc' 		=> __( 'Add prefix to order number', 'woocommerce' ),
+            'id' 		=> 'wc_order_prefix',
+            'type' 		=> 'text',
+        ),
+        array( 'type' => 'sectionend', 'id' => 'wc_order_number_options' ),
+    ) );
+}, 20 );
+
+add_action( 'woocommerce_update_options_general',  'order_prefix_admin_settings' );
+
+function order_prefix_admin_settings(){
+    woocommerce_update_options( array(
+        array(
+            'name' => __( 'Order prefix', 'woocommerce' ),
+            'type' => 'title',
+            'id' => 'wc_order_number_options'
+        ),
+        array(
+            'name' 		=> __( 'Order prefix', 'woocommerce' ),
+            'desc' 		=> __( 'Add prefix to order number', 'woocommerce' ),
+            'id' 		=> 'wc_order_prefix',
+            'type' 		=> 'text',
+        ),
+        array( 'type' => 'sectionend', 'id' => 'wc_order_number_options' ),
+    ) );
+}
+
+add_filter('woocommerce_order_number', function ($order_id){
+    $prefix = get_option( 'wc_order_prefix', true );
+
+    return ($prefix && $prefix !== '1' ) ? $prefix . $order_id : $order_id;
+});
