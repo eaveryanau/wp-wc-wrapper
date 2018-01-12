@@ -207,7 +207,7 @@ static function updateProduct($id, $data)
                 }
             } else {
                 if ($prop == 'stock_quantity') {
-                    if (!empty($val) || $val > 0) {
+                    if (!empty($val) || $val >= 0) {
                         $product->set_manage_stock(true);
                         $product->set_stock_quantity($val);
                     }
@@ -310,7 +310,7 @@ static function createProduct($data)
                 }
             } else {
                 if ($prop == 'stock_quantity') {
-                    if (!empty($val) || $val > 0) {
+                    if (!empty($val) || $val >= 0) {
                         $product->set_manage_stock(true);
                         $product->set_stock_quantity($val);
                     }
