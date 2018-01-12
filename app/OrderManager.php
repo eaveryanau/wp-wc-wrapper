@@ -214,6 +214,8 @@ Class OrderManager
             // *End date
 
             $total = $order->get_total();
+            $user_id = $order->get_user_id();
+            $user_role = $order->get_user()->roles[0];
             $order = $order->get_data();
 
             $order['date_order'] = [
@@ -223,6 +225,8 @@ Class OrderManager
                 'completed' => $date_complete
             ];
             $order['unique_brand_number_id'] = $prefix. $order['id'];
+            $order['user_id'] = $user_id;
+            $order['user_role'] = $user_role;
             $order['line_items'] = $itms;
             $order['meta_data'] = $mt;
             $order['shipping_lines'] = $shipping_methods;
