@@ -17,3 +17,5 @@ require_once 'BackEndPreprocess.php';
 
 require_once 'MailService.php';
 require_once 'Notifications.php';
+
+require_once 'OrderStatuses.php';
