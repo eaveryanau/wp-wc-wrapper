@@ -153,7 +153,7 @@ function hub_validate_settings( $input ) {
  * (ix) Order Cancelled
  */
 
-add_action( 'init', 'register_my_new_order_statuses' );
+/*add_action( 'init', 'register_my_new_order_statuses' );
 
 function register_my_new_order_statuses() {
 	register_post_status( 'wc-invoiced', array(
@@ -212,9 +212,9 @@ function register_my_new_order_statuses() {
 		'show_in_admin_status_list' => true,
 		'label_count'               => _n_noop( 'Returned <span class="count">(%s)</span>', 'Returned<span class="count">(%s)</span>', 'woocommerce' )
 	) );
-}
+}*/
 
-add_filter( 'wc_order_statuses', 'my_new_wc_order_statuses' );
+/*add_filter( 'wc_order_statuses', 'my_new_wc_order_statuses' );
 
 // Register in wc_order_statuses.
 function my_new_wc_order_statuses( $order_statuses ) {
@@ -227,7 +227,7 @@ function my_new_wc_order_statuses( $order_statuses ) {
 	$order_statuses['wc-returned']         = _x( 'Returned', 'Order status', 'woocommerce' );
 
 	return $order_statuses;
-}
+}*/
 
 add_action( 'woocommerce_settings_general_options_after', function(){
     woocommerce_admin_fields( array(
