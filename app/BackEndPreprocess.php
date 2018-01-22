@@ -23,7 +23,6 @@ add_action( 'admin_menu', 'hub_options' );
 function delete_default_shipping_methods($methods) {
 
     unset($methods['local_pickup']);
-    unset($methods['free_shipping']);
     unset($methods['flat_rate']);
 
     return $methods;
@@ -137,97 +136,6 @@ function hub_validate_settings( $input ) {
 
 	return $valid_input;
 }
-
-
-/*
- * Install new statuses
- *
- * (i) Pending Dispatch
- * (ii) Courier Collection Requested
- * (iii) Courier Collection Request Received
- * (iv) Order Collected
- * (v) Order Delivered
- * (vi) Order Completed
- * (vii) Order Invoiced
- * (viii) Order Returned
- * (ix) Order Cancelled
- */
-
-/*add_action( 'init', 'register_my_new_order_statuses' );
-
-function register_my_new_order_statuses() {
-	register_post_status( 'wc-invoiced', array(
-		'label'                     => _x( 'Invoiced', 'Order status', 'woocommerce' ),
-		'public'                    => true,
-		'exclude_from_search'       => false,
-		'show_in_admin_all_list'    => true,
-		'show_in_admin_status_list' => true,
-		'label_count'               => _n_noop( 'Invoiced <span class="count">(%s)</span>', 'Invoiced<span class="count">(%s)</span>', 'woocommerce' )
-	) );
-	register_post_status( 'wc-pending-dispatch', array(
-		'label'                     => _x( 'Pending Dispatch', 'Order status', 'woocommerce' ),
-		'public'                    => true,
-		'exclude_from_search'       => false,
-		'show_in_admin_all_list'    => true,
-		'show_in_admin_status_list' => true,
-		'label_count'               => _n_noop( 'Pending Dispatch <span class="count">(%s)</span>', 'Pending Dispatch<span class="count">(%s)</span>', 'woocommerce' )
-	) );
-	register_post_status( 'wc-cc-requested', array(
-		'label'                     => _x( 'Courier Collection Requested', 'Order status', 'woocommerce' ),
-		'public'                    => true,
-		'exclude_from_search'       => false,
-		'show_in_admin_all_list'    => true,
-		'show_in_admin_status_list' => true,
-		'label_count'               => _n_noop( 'Courier Collection Requested <span class="count">(%s)</span>', 'Courier Collection Requested<span class="count">(%s)</span>', 'woocommerce' )
-	) );
-	register_post_status( 'wc-cc-req-received', array(
-		'label'                     => _x( 'Courier Collection Request Received', 'Order status', 'woocommerce' ),
-		'public'                    => true,
-		'exclude_from_search'       => false,
-		'show_in_admin_all_list'    => true,
-		'show_in_admin_status_list' => true,
-		'label_count'               => _n_noop( 'Courier Collection Request Received <span class="count">(%s)</span>', 'Courier Collection Request Received<span class="count">(%s)</span>', 'woocommerce' )
-	) );
-	register_post_status( 'wc-collected', array(
-		'label'                     => _x( 'Collected', 'Order status', 'woocommerce' ),
-		'public'                    => true,
-		'exclude_from_search'       => false,
-		'show_in_admin_all_list'    => true,
-		'show_in_admin_status_list' => true,
-		'label_count'               => _n_noop( 'Collected <span class="count">(%s)</span>', 'Collected<span class="count">(%s)</span>', 'woocommerce' )
-	) );
-	register_post_status( 'wc-delivered', array(
-		'label'                     => _x( 'Delivered', 'Order status', 'woocommerce' ),
-		'public'                    => true,
-		'exclude_from_search'       => false,
-		'show_in_admin_all_list'    => true,
-		'show_in_admin_status_list' => true,
-		'label_count'               => _n_noop( 'Delivered <span class="count">(%s)</span>', 'Delivered<span class="count">(%s)</span>', 'woocommerce' )
-	) );
-	register_post_status( 'wc-returned', array(
-		'label'                     => _x( 'Returned', 'Order status', 'woocommerce' ),
-		'public'                    => true,
-		'exclude_from_search'       => false,
-		'show_in_admin_all_list'    => true,
-		'show_in_admin_status_list' => true,
-		'label_count'               => _n_noop( 'Returned <span class="count">(%s)</span>', 'Returned<span class="count">(%s)</span>', 'woocommerce' )
-	) );
-}*/
-
-/*add_filter( 'wc_order_statuses', 'my_new_wc_order_statuses' );
-
-// Register in wc_order_statuses.
-function my_new_wc_order_statuses( $order_statuses ) {
-	$order_statuses['wc-invoiced']         = _x( 'Invoiced', 'Order status', 'woocommerce' );
-	$order_statuses['wc-pending-dispatch'] = _x( 'Pending Dispatch', 'Order status', 'woocommerce' );
-	$order_statuses['wc-cc-requested']     = _x( 'Courier Collection Requested', 'Order status', 'woocommerce' );
-	$order_statuses['wc-cc-req-received']  = _x( 'Courier Collection Request Received', 'Order status', 'woocommerce' );
-	$order_statuses['wc-collected']        = _x( 'Collected', 'Order status', 'woocommerce' );
-	$order_statuses['wc-delivered']        = _x( 'Delivered', 'Order status', 'woocommerce' );
-	$order_statuses['wc-returned']         = _x( 'Returned', 'Order status', 'woocommerce' );
-
-	return $order_statuses;
-}*/
 
 add_action( 'woocommerce_settings_general_options_after', function(){
     woocommerce_admin_fields( array(
