@@ -20,4 +20,39 @@ class OrderStatuses
     const CANCELED_RETURNED='wc-canceled-returned';
     const DELIVERY_FAILED='wc-delivery-failed';
 
+     /**
+     * @param string $code
+     * @return string
+     */
+    static function getFullOrderCode($code){
+        $WC_PREFIX='wc-';
+        return $WC_PREFIX.$code;
+    }
+     /**
+     * @param string $order_status
+     * @return bool
+     */
+    static function isStatusExist($order_status){
+        $this_class=new  ReflectionClass(__CLASS__);
+        $existing_statuses = array_flip($this_class->getConstants());
+        return array_key_exists($order_status,$existing_statuses);
+    }
+
+    /**
+     * @param WC_Order $order
+     * @return bool
+     */
+    static function PlaceRelatedAction($order){
+        $WC_ORDER_STATUS_TAG='woocommerce_order_status_';
+
+        $status=self::getFullOrderCode($order->get_status());
+
+        if(self::isStatusExist($status)){
+            do_action($WC_ORDER_STATUS_TAG.$status, $order);
+            return true;
+        }
+        return false;
+
+    }
+
 }

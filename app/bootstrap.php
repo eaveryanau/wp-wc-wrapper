@@ -20,3 +20,4 @@ require_once 'Notifications.php';
 
 require_once 'OrderStatuses.php';
 require_once 'OrderFlow.php';
+require_once 'Actions/CustomOrderActions.php';
